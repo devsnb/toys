@@ -1,10 +1,10 @@
-import Link from 'next/link';
-import type { Metadata } from 'next';
-import { toolsMetadata } from '@/components/app-layout';
+import Link from "next/link";
+import type { Metadata } from "next";
+import { toolsMetadata } from "@/components/app-layout";
 
 export const metadata: Metadata = {
-  title: 'Formatter',
-  description: 'Text and code formatters',
+  title: "Formatter",
+  description: "Text and code formatters",
 };
 
 /* NOTE: The exported `formatterReadme` was removed because Next.js page modules
@@ -13,8 +13,13 @@ export const metadata: Metadata = {
 
 export default function FormatterIndexPage() {
   const formatters = toolsMetadata
-    .filter((t) => t.href.startsWith('/formatter'))
-    .map((t) => ({ id: t.id, href: t.href, title: t.title, description: t.description }));
+    .filter((t) => t.href.startsWith("/formatter"))
+    .map((t) => ({
+      id: t.id,
+      href: t.href,
+      title: t.title,
+      description: t.description,
+    }));
 
   return (
     <main className="max-w-4xl mx-auto">
@@ -37,10 +42,14 @@ export default function FormatterIndexPage() {
             <article className="p-4 border rounded-md hover:shadow-sm transition">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium">{tool.title}</h2>
-                <span className="text-sm text-muted-foreground">{tool.href.replace('/formatter', '') || '/'}</span>
+                <span className="text-sm text-muted-foreground">
+                  {tool.href.replace("/formatter", "") || "/"}
+                </span>
               </div>
               {tool.description && (
-                <p className="text-sm text-muted-foreground mt-2">{tool.description}</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {tool.description}
+                </p>
               )}
             </article>
           </Link>
@@ -48,7 +57,8 @@ export default function FormatterIndexPage() {
       </section>
 
       <footer className="mt-8 text-sm text-muted-foreground">
-        Tip: select a tool to open its editor. Formatting is performed entirely on the client.
+        Tip: select a tool to open its editor. Formatting is performed entirely
+        on the client.
       </footer>
     </main>
   );

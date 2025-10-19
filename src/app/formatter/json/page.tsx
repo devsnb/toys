@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import JsonFormatterClient from './client';
+import type { Metadata } from "next";
+import JsonFormatterClient from "./client";
 
 export const metadata: Metadata = {
-  title: 'JSON Formatter',
-  description: 'Format and minify JSON',
+  title: "JSON Formatter",
+  description: "Format and minify JSON",
 };
 
 export default function Page() {

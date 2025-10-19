@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { Search, Calculator, Palette, Code, FileText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ThemeToggle } from '@/components/theme-toggle';
-import useAppStore from '@/lib/store';
+import React from "react";
+import Link from "next/link";
+import { Search, Calculator, Palette, Code, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ThemeToggle } from "@/components/theme-toggle";
+import useAppStore from "@/lib/store";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -25,32 +25,32 @@ interface Tool {
 
 const tools: Tool[] = [
   {
-    id: 'calculator',
-    name: 'Calculator',
+    id: "calculator",
+    name: "Calculator",
     icon: Calculator,
-    href: '/calculator',
-    meta: { title: 'Calculator', description: 'Perform calculations' },
+    href: "/calculator",
+    meta: { title: "Calculator", description: "Perform calculations" },
   },
   {
-    id: 'color-picker',
-    name: 'Color Picker',
+    id: "color-picker",
+    name: "Color Picker",
     icon: Palette,
-    href: '/color-picker',
-    meta: { title: 'Color Picker', description: 'Pick and convert colors' },
+    href: "/color-picker",
+    meta: { title: "Color Picker", description: "Pick and convert colors" },
   },
   {
-    id: 'encoder',
-    name: 'Encoder/Decoder',
+    id: "encoder",
+    name: "Encoder/Decoder",
     icon: Code,
-    href: '/encoder',
-    meta: { title: 'Encoder / Decoder', description: 'Encode and decode data' },
+    href: "/encoder",
+    meta: { title: "Encoder / Decoder", description: "Encode and decode data" },
   },
   {
-    id: 'json-formatter',
-    name: 'JSON Formatter',
+    id: "json-formatter",
+    name: "JSON Formatter",
     icon: FileText,
-    href: '/formatter/json',
-    meta: { title: 'JSON Formatter', description: 'Format and minify JSON' },
+    href: "/formatter/json",
+    meta: { title: "JSON Formatter", description: "Format and minify JSON" },
   },
 ];
 
@@ -70,7 +70,9 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Left Sidebar */}
       <div className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col">
         <div className="p-4 border-b border-sidebar-border">
-          <h1 className="text-xl font-bold text-sidebar-foreground">WebDev Toys</h1>
+          <h1 className="text-xl font-bold text-sidebar-foreground">
+            WebDev Toys
+          </h1>
         </div>
         <div className="flex-1 p-4">
           <div className="space-y-2">
@@ -78,10 +80,14 @@ export function AppLayout({ children }: AppLayoutProps) {
               <Button
                 key={tool.id}
                 asChild
-                variant={selectedTool === tool.id ? 'secondary' : 'ghost'}
+                variant={selectedTool === tool.id ? "secondary" : "ghost"}
                 className="w-full justify-start"
               >
-                <Link href={tool.href} onClick={() => setSelectedTool(tool.id)} className="w-full flex items-center">
+                <Link
+                  href={tool.href}
+                  onClick={() => setSelectedTool(tool.id)}
+                  className="w-full flex items-center"
+                >
                   <tool.icon className="mr-2 h-4 w-4" />
                   {tool.name}
                 </Link>
@@ -98,19 +104,14 @@ export function AppLayout({ children }: AppLayoutProps) {
           <div className="flex items-center space-x-4 flex-1">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search tools..."
-                className="pl-10"
-              />
+              <Input placeholder="Search tools..." className="pl-10" />
             </div>
           </div>
           <ThemeToggle />
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-6 overflow-auto">
-          {children}
-        </div>
+        <div className="flex-1 p-6 overflow-auto">{children}</div>
       </div>
     </div>
   );

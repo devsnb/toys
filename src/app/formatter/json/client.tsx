@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import dynamic from 'next/dynamic';
-import { Button } from '@/components/ui/button';
-import { Code, Minimize2, Trash2, Copy, AlertTriangle } from 'lucide-react';
-import useAppStore from '@/lib/store';
+import React from "react";
+import dynamic from "next/dynamic";
+import { Button } from "@/components/ui/button";
+import { Code, Minimize2, Trash2, Copy, AlertTriangle } from "lucide-react";
+import { useTheme } from "next-themes";
 
-const Editor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
+const Editor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
 interface JsonFormatterClientProps {
   initialValue?: string;
@@ -27,38 +27,21 @@ interface JsonFormatterClientProps {
  *   - Ctrl/Cmd+K => Clear
  */
 export default function JsonFormatterClient({
-  initialValue = '',
+  initialValue = "",
 }: JsonFormatterClientProps) {
   const [input, setInput] = React.useState<string>(initialValue);
-  const [output, setOutput] = React.useState<string>('');
+  const [output, setOutput] = React.useState<string>("");
   const [error, setError] = React.useState<string | null>(null);
   const [copied, setCopied] = React.useState(false);
   const [isMinified, setIsMinified] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
 
-  const { theme } = useAppStore();
-  const [monacoTheme, setMonacoTheme] = React.useState<'light' | 'vs-dark'>('light');
+  const { resolvedTheme } = useTheme();
+  const monacoTheme = resolvedTheme === "dark" ? "vs-dark" : "light";
 
   React.useEffect(() => {
-    const updateTheme = () => {
-      if (theme === 'dark') {
-        setMonacoTheme('vs-dark');
-      } else if (theme === 'light') {
-        setMonacoTheme('light');
-      } else { // system
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setMonacoTheme(isDark ? 'vs-dark' : 'light');
-      }
-    };
-
-    updateTheme();
-
-    if (theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => updateTheme();
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
-  }, [theme]);
+    setMounted(true);
+  }, []);
 
   React.useEffect(() => {
     if (!copied) return;
@@ -79,8 +62,8 @@ export default function JsonFormatterClient({
       setIsMinified(false);
       setOutput(pretty);
     } catch (e: any) {
-      setOutput('');
-      setError(e?.message ?? 'Invalid JSON');
+      setOutput("");
+      setError(e?.message ?? "Invalid JSON");
     }
   }, [input]);
 
@@ -92,8 +75,8 @@ export default function JsonFormatterClient({
       setIsMinified(true);
       setOutput(min);
     } catch (e: any) {
-      setOutput('');
-      setError(e?.message ?? 'Invalid JSON');
+      setOutput("");
+      setError(e?.message ?? "Invalid JSON");
     }
   }, [input]);
 
@@ -109,14 +92,14 @@ export default function JsonFormatterClient({
 
     // Fallback for environments without navigator.clipboard
     try {
-      const ta = document.createElement('textarea');
+      const ta = document.createElement("textarea");
       ta.value = output;
-      ta.setAttribute('readonly', '');
-      ta.style.position = 'absolute';
-      ta.style.left = '-9999px';
+      ta.setAttribute("readonly", "");
+      ta.style.position = "absolute";
+      ta.style.left = "-9999px";
       document.body.appendChild(ta);
       ta.select();
-      document.execCommand('copy');
+      document.execCommand("copy");
       document.body.removeChild(ta);
       setCopied(true);
     } catch {
@@ -125,20 +108,19 @@ export default function JsonFormatterClient({
   }, [output]);
 
   const clearAll = React.useCallback(() => {
-    setInput('');
-    setOutput('');
+    setInput("");
+    setOutput("");
     setError(null);
   }, []);
-
-
 
   return (
     <div className="max-w-5xl mx-auto">
       <header className="mb-4">
         <h2 className="text-2xl font-semibold">JSON Formatter</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Paste JSON into the input area and click <strong>Format</strong> to pretty-print, or{' '}
-          <strong>Minify</strong> to compress. Formatting runs entirely in your browser.
+          Paste JSON into the input area and click <strong>Format</strong> to
+          pretty-print, or <strong>Minify</strong> to compress. Formatting runs
+          entirely in your browser.
         </p>
       </header>
 
@@ -146,19 +128,17 @@ export default function JsonFormatterClient({
         {/* Input */}
         <section className="flex flex-col">
           <div className="border rounded-lg p-4 bg-card shadow-sm">
-            <label className="mb-3 text-sm font-medium">
-              Input
-            </label>
+            <label className="mb-3 text-sm font-medium">Input</label>
             <Editor
               height="32rem"
               language="json"
               value={input}
-              onChange={(value) => setInput(value || '')}
+              onChange={(value) => setInput(value || "")}
               theme={monacoTheme}
               options={{
                 readOnly: false,
                 minimap: { enabled: false },
-                lineNumbers: 'on',
+                lineNumbers: "on",
                 fontSize: 14,
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
@@ -170,7 +150,12 @@ export default function JsonFormatterClient({
                 <Code className="w-4 h-4 mr-1" />
                 Format
               </Button>
-              <Button size="sm" variant="outline" onClick={minifyJson} disabled={!input}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={minifyJson}
+                disabled={!input}
+              >
                 <Minimize2 className="w-4 h-4 mr-1" />
                 Minify
               </Button>
@@ -178,7 +163,9 @@ export default function JsonFormatterClient({
                 <Trash2 className="w-4 h-4 mr-1" />
                 Clear
               </Button>
-              <div className="ml-auto text-sm text-muted-foreground">{input ? `${input.length} chars` : 'empty'}</div>
+              <div className="ml-auto text-sm text-muted-foreground">
+                {input ? `${input.length} chars` : "empty"}
+              </div>
             </div>
           </div>
         </section>
@@ -186,9 +173,7 @@ export default function JsonFormatterClient({
         {/* Output */}
         <section className="flex flex-col">
           <div className="border rounded-lg p-4 bg-card shadow-sm">
-            <label className="mb-3 text-sm font-medium">
-              Output
-            </label>
+            <label className="mb-3 text-sm font-medium">Output</label>
             <Editor
               height="32rem"
               language="json"
@@ -197,18 +182,18 @@ export default function JsonFormatterClient({
               options={{
                 readOnly: true,
                 minimap: { enabled: false },
-                lineNumbers: 'on',
+                lineNumbers: "on",
                 fontSize: 14,
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
-                wordWrap: isMinified ? 'on' : 'off',
+                wordWrap: isMinified ? "on" : "off",
               }}
               loading={<div>Loading editor...</div>}
             />
             <div className="flex items-center gap-2 mt-4">
               <Button size="sm" onClick={copyOutput} disabled={!output}>
                 <Copy className="w-4 h-4 mr-1" />
-                {copied ? 'Copied' : 'Copy'}
+                {copied ? "Copied" : "Copy"}
               </Button>
               <Button
                 size="sm"
@@ -222,14 +207,19 @@ export default function JsonFormatterClient({
                 Ensure Formatted
               </Button>
 
-              <div className="ml-auto text-sm text-muted-foreground">{output ? `${output.length} chars` : 'empty'}</div>
+              <div className="ml-auto text-sm text-muted-foreground">
+                {output ? `${output.length} chars` : "empty"}
+              </div>
             </div>
           </div>
         </section>
       </div>
 
       {error && (
-        <div className="mt-6 p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive flex items-start gap-3" role="alert">
+        <div
+          className="mt-6 p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive flex items-start gap-3"
+          role="alert"
+        >
           <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" />
           <div>
             <strong className="font-medium">Error:</strong>
@@ -239,8 +229,9 @@ export default function JsonFormatterClient({
       )}
 
       <footer className="mt-6 text-xs text-muted-foreground">
-        Shortcuts: <kbd className="px-1 border rounded">Ctrl/Cmd+Enter</kbd> Format •{' '}
-        <kbd className="px-1 border rounded">Ctrl/Cmd+M</kbd> Minify • <kbd className="px-1 border rounded">Ctrl/Cmd+K</kbd> Clear
+        Shortcuts: <kbd className="px-1 border rounded">Ctrl/Cmd+Enter</kbd>{" "}
+        Format • <kbd className="px-1 border rounded">Ctrl/Cmd+M</kbd> Minify •{" "}
+        <kbd className="px-1 border rounded">Ctrl/Cmd+K</kbd> Clear
       </footer>
     </div>
   );
