@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/theme-toggle";
 import useAppStore from "@/lib/store";
+import { toolsMetadata } from "@/lib/tools-metadata";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -23,44 +24,28 @@ interface Tool {
   };
 }
 
-const tools: Tool[] = [
-  {
-    id: "calculator",
-    name: "Calculator",
-    icon: Calculator,
-    href: "/calculator",
-    meta: { title: "Calculator", description: "Perform calculations" },
-  },
-  {
-    id: "color-picker",
-    name: "Color Picker",
-    icon: Palette,
-    href: "/color-picker",
-    meta: { title: "Color Picker", description: "Pick and convert colors" },
-  },
-  {
-    id: "encoder",
-    name: "Encoder/Decoder",
-    icon: Code,
-    href: "/encoder",
-    meta: { title: "Encoder / Decoder", description: "Encode and decode data" },
-  },
-  {
-    id: "json-formatter",
-    name: "JSON Formatter",
-    icon: FileText,
-    href: "/formatter/json",
-    meta: { title: "JSON Formatter", description: "Format and minify JSON" },
-  },
-];
+// Map of icons for each tool
+const iconMap: Record<string, any> = {
+  calculator: Calculator,
+  "color-picker": Palette,
+  encoder: Code,
+  "json-formatter": FileText,
+};
 
-// exported metadata map so pages can import routing/meta information
-export const toolsMetadata = tools.map((t) => ({
-  id: t.id,
-  href: t.href,
-  title: t.meta.title,
-  description: t.meta.description,
+// Derive tools array from metadata
+const tools: Tool[] = toolsMetadata.map((meta) => ({
+  id: meta.id,
+  name: meta.title,
+  icon: iconMap[meta.id] || FileText,
+  href: meta.href,
+  meta: {
+    title: meta.title,
+    description: meta.description,
+  },
 }));
+
+// Re-export for convenience (though it's now imported from tools-metadata)
+export { toolsMetadata };
 
 export function AppLayout({ children }: AppLayoutProps) {
   const { selectedTool, setSelectedTool } = useAppStore();

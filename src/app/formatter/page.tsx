@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { toolsMetadata } from "@/components/app-layout";
+import { toolsMetadata } from "@/lib/tools-metadata";
 
 export const metadata: Metadata = {
   title: "Formatter",
